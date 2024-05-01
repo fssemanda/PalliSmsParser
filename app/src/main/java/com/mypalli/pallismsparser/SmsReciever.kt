@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.mypalli.pallismsparser.SMSViewModels.SMSViewModel
 import okhttp3.internal.http.toHttpDateString
+import java.lang.Exception
 import java.util.Date
 import kotlin.time.Duration.Companion.days
 //class SmsReceiver : BroadcastReceiver() {
@@ -64,10 +66,19 @@ import kotlin.time.Duration.Companion.days
 //                Log.d("SmsReceiver", "$body")
 //                Log.d("My Regex data", "$myData")
 //            }
-            var myData= extractTransactionDetails(messageString,messages.first().displayOriginatingAddress)
-            val myDataIntent = Intent("com.mypalli.pallismsparser.SMS_RECEIVED")
-            myDataIntent.putExtra("sms_data", myData.toString()) // assuming myData is a JSON string
-            LocalBroadcastManager.getInstance(context).sendBroadcast(myDataIntent)
+            try {
+                var myData= extractTransactionDetails(messageString,messages.first().displayOriginatingAddress)
+                val myDataIntent = Intent("com.mypalli.pallismsparser.SMS_RECEIVED")
+                myDataIntent.putExtra("sms_data", myData.toString()) // assuming myData is a JSON string
+                LocalBroadcastManager.getInstance(context).sendBroadcast(myDataIntent)
+            }
+            catch (ex: Exception){
+                val myIntent = Intent("SMS_ISSUES")
+                myIntent.putExtra("sms_data", "${ex.message}")
+                LocalBroadcastManager.getInstance(context).sendBroadcast(myIntent)
+
+            }
+
         }
     }
 }
@@ -129,10 +140,10 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "name" to values.getOrNull(1)!!,  // Adjust according to actual group index for each pattern
                         "phone_number" to originatingAddress,  // Adjust according to actual group index for each pattern
 //                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
-                        "fee" to values.getOrNull(1),
-                        "transactionId" to values.getOrNull(2),
-                        "balance" to values.getOrNull(3),
-                        "date" to values.getOrNull(4),
+                        "fee" to values.getOrNull(2),
+                        "transactionId" to values.getOrNull(3),
+                        "balance" to values.getOrNull(4),
+                        "date" to values.getOrNull(5),
                         // Adjust according to actual group index for each pattern
                     )
                 } else if(type=="Airtel_Transfer"){

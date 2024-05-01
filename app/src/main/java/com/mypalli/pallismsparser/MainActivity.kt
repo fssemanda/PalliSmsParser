@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.provider.Telephony
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -51,9 +52,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-            IntentFilter("com.mypalli.pallismsparser.SMS_RECEIVED")
-        )
+        try{
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                IntentFilter("com.mypalli.pallismsparser.SMS_RECEIVED")
+            )
+        }
+        catch (ex:Exception){
+            Toast.makeText(this, "${ex.message}",Toast.LENGTH_LONG).show()
+        }
+
     }
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -64,7 +71,12 @@ class MainActivity : ComponentActivity() {
             Log.d("Data Received via intent", formattedString)
 
             if (formattedString != null) {
-                handleSMSData(formattedString)
+                try {
+                    handleSMSData(formattedString)
+                }
+                catch (ex:Exception){
+                    Toast.makeText(context, "${ex.message}",Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
