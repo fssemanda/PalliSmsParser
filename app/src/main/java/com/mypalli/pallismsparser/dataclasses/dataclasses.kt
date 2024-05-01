@@ -11,5 +11,5 @@ data class SMSData(
     val name:String?,
     val reason:String?,
     val transactionId:String?,
-//    val :String?,
+    val tax:String?,
 )

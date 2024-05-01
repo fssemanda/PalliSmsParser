@@ -82,12 +82,15 @@ fun getRegexPatterns(): List<Pair<String, Regex>> {
         "Airtel_CustomerPayment" to """RECEIVED UGX ([\d,]+) from (\d+), ([A-Z ]+).+Bal UGX ([\d,]+)\. TID: (\d+)""".toRegex(),
         "Airtel_Remittance" to """SENT UGX ([\d,]+) to ([A-Z ]+) (\d+).+Fee UGX ([\d,]+).+Bal UGX ([\d,]+)\. TID: (\d+).+Date: (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
         "Airtel_Transfer" to """You have been debited UGX ([\d,]+)\. Fee UGX ([\d,]+)\. Bal UGX ([\d,]+)\. TID (\d+)""".toRegex(),
-       "Airtel_Withdraw" to """Withdraw of UGX([\d,]+) with Agent ID: (\d+)\.Fee UGX ([\d,]+)\. Bal UGX ([\d,]+)\.TID: (\d+)\. Date (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})\.Tax UGX ([\d,]+)\.https://bit\.ly/3ZgpiNw""".toRegex(),
+       "Airtel_Withdraw" to """Withdraw of UGX([\d,]+) with Agent ID: (\d+)\.Fee UGX ([\d,]+)\. Bal UGX ([\d,]+)\.TID: (\d+)\. Date (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})\.Tax UGX (\d+)\.https://bit\.ly/3ZgpiNw""".toRegex(),
         // MTN
         "MTN_Remittance" to """You have sent UGX ([\d,]+) to ([A-Z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}), fee: (\d+).+New balance: (\d+). ID :(\d+)""".toRegex(),
         "MTN_Withdraw" to """You have withdrawn UGX ([\d,]+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\. Fee: UGX ([\d,]+), Tax: UGX ([\d,]+)\. New balance: UGX ([\d,.]+)""".toRegex(),
         "MTN_Transfer" to """You have received UGX ([\d,]+) from ([A-Za-z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+fee:(\d+).+New balance: UGX ([\d,]+)\. ID: (\d+)""".toRegex(),
         "MTN_Deposit" to """You have deposited UGX ([\d,]+) from ([A-Z ]+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}). New balance: UGX ([\d,]+). ID: (\d+). Do NOT share your Mobile Money PIN.""".toRegex(),
+//        "MTN_WithdrawRequest" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
+        "MTN_Request" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is  UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
+
         // MOMO""".toRegex() //
 //        "MOMO_Payment" to """You have received ([\d,]+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: ([\d,]+) UGX. Fee was ([\d,]+) UGX. Financial Transaction Id: (\d+).""".toRegex(),
 //        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Message from sender: Till:(\d+).+Your new balance: ([\d,]+) UGX. Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex()
@@ -110,10 +113,10 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "phone_number" to originatingAddress,  // Adjust according to actual group index for each pattern
 //                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
 //
-                        "date" to values.getOrNull(5),
-                        "fee" to values.getOrNull(2),
+                        "date" to values.getOrNull(4),
+//                        "fee" to values.getOrNull(2),
                         "transactionId" to values.getOrNull(3),
-                        "balance" to values.getOrNull(4),
+                        "balance" to values.getOrNull(2),
 //                        "fee" to values.getOrNull(3),
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
                     )
@@ -182,13 +185,13 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "telNetwork" to type.split("_")[0],
                         "amount" to values.getOrNull(0)!!,
                         "name" to values.getOrNull(1)!!,  // Adjust according to actual group index for each pattern
-                        "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
 //                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
                         "fee" to values.getOrNull(2),
                         "transactionId" to values.getOrNull(4),
                         "balance" to values.getOrNull(3),
                         "date" to values.getOrNull(5),
-                        "Tax" to values.getOrNull(6) // Adjust according to actual group index for each pattern
+                        "tax" to values.getOrNull(6) // Adjust according to actual group index for each pattern
                     )
                 }
 
@@ -211,13 +214,26 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
                     )
                 }
+                else if(type=="MTN_Request"){
+                    return mapOf(
+                        "transactionType" to type.split("_")[1],
+                        "telNetwork" to type.split("_")[0],
+                        "amount" to values.getOrNull(0)!!,
+                        "name" to values.getOrNull(1),
+                        "fee" to values.getOrNull(2),
+//                        "tax" to values.getOrNull(3),
+////                        "balance" to values.getOrNull(4),
+                        "transactionId" to values.getOrNull(4),
+////                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
+                    )
+                }
                 else if(type=="MTN_Withdraw"){
                     return mapOf(
                         "transactionType" to type.split("_")[1],
                         "telNetwork" to type.split("_")[0],
                         "amount" to values.getOrNull(0)!!,
                         "fee" to values.getOrNull(2),
-                        "Tax" to values.getOrNull(3),
+                        "tax" to values.getOrNull(3),
                         "balance" to values.getOrNull(4),
                         "date" to values.getOrNull(1),
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern

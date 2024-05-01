@@ -86,8 +86,9 @@ class MainActivity : ComponentActivity() {
         smsViewModel.transactionId.value=smsData.transactionId
         smsViewModel.date.value = smsData.date
         smsViewModel.telNetworkState.value=smsData.telNetwork.toString()
+        smsViewModel.tax.value=smsData.tax.toString()
 
-        Log.d("Data before being processed",smsData.phone_number.toString())
+        Log.d("Data before being processed",smsData.tax.toString())
 
         smsViewModel.postData()
         // Update your ViewModel state or call a function to process the data

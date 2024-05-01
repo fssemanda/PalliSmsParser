@@ -24,7 +24,8 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository()):Vi
     val name= mutableStateOf<String?>(null)
     val reason= mutableStateOf<String?>(null)
     val transactionId= mutableStateOf<String?>(null)
-    
+    val tax= mutableStateOf<String?>(null)
+
     
 //    fun postData(data:ArrayList<SMSData>){
 //        viewModelScope.launch {
@@ -60,6 +61,7 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository()):Vi
                 name = name.value,
                 reason=reason.value,
                 transactionId=transactionId.value,
+                tax = tax.value
 
             )
 
