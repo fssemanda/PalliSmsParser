@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mypalli.pallismsparser.dataclasses.AppDatabase
 import com.mypalli.pallismsparser.dataclasses.SMSData
+import com.mypalli.pallismsparser.dataclasses.SMSDataEntity
 import com.mypalli.pallismsparser.dataclasses.SMSRepository
 import kotlinx.coroutines.launch
 
-class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository()):ViewModel() {
+class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),private val database: AppDatabase):ViewModel() {
      var smsDataList = mutableStateOf<SMSData?>(null)
 
     val smsDataState = mutableStateOf<SMSData?>(null)
@@ -72,7 +74,41 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository()):Vi
             Log.d("Data to be posted", smsData.toString())
         }
     }
-    
+    fun saveDataLocally(smsData: SMSData) {
+        viewModelScope.launch {
+            val entity = SMSDataEntity(
+                telNetwork = smsData.telNetwork,
+                transactionType = smsData.transactionType,
+                amount = smsData.amount,
+                phone_number = smsData.phone_number,
+                date = smsData.date,
+                fee = smsData.fee,
+                balance = smsData.balance,
+                name = smsData.name,
+                reason = smsData.reason,
+                transactionId = smsData.transactionId,
+                tax = smsData.tax
+            )
+            database.smsDao().insert(entity)
+        }
+    }
+
+    fun synchronizeData() {
+        viewModelScope.launch {
+            val smsDataList = database.smsDao().getAllSMSData()
+            smsDataList.forEach {
+                try {
+                    Log.e("Saving Data to DB", "it")
+
+                    postSMSData(smsDataState.value!!)
+                    database.smsDao().deleteSMSData(it.id)  // Delete after successful upload
+                } catch (e: Exception) {
+                    Log.e("Sync Error", "Failed to upload: ${e.message}")
+                }
+            }
+        }
+    }
+
     suspend fun postSMSData(smsData: SMSData):SMSData{
         Log.d("Inside postSMSData in ViewModel", smsData.toString())
         return smsRepository.postSMSData(smsData)

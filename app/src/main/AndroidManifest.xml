@@ -45,6 +45,12 @@
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".dataclasses.NetworkChangeReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
 <!--        <receiver android:name=".SmsReceiver"-->
 <!--            android:exported="true">-->
 <!--            <intent-filter>-->
