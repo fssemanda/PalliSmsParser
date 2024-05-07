@@ -1,8 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("androidx.room")
+    id ("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
-
 }
 
 android {
@@ -80,7 +81,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.google.dagger:dagger:2.51.1")
     implementation("com.google.dagger:hilt-android:2.51.1")
-//    implementation("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("com.google.dagger:hilt-android-compiler:2.51.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -88,4 +89,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+room {
+    schemaLocation = "$projectDir/schemas"
 }
