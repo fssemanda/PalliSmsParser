@@ -76,6 +76,7 @@ class MainActivity : ComponentActivity() {
                 }
                 catch (ex:Exception){
                     Toast.makeText(context, "${ex.message}",Toast.LENGTH_LONG).show()
+                    Log.d("Exception in onReceive Method","$ex")
                 }
             }
         }
