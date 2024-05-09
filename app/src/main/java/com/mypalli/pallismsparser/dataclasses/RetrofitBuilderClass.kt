@@ -9,8 +9,9 @@ class RetrofitBuilderClass {
     companion object{
 //                const val BASE_URL ="http://192.168.2.109:8000/"
 //        const val BASE_URL ="https://pangisha.ledge.ug/"
-        const val BASE_URL ="http://192.168.78.186:8000/"
+//        const val BASE_URL ="http://192.168.78.186:8000/"
 //        const val BASE_URL ="http://192.168.1.101:8000/"
+        const val BASE_URL ="https://palli-app2-kprtnean4a-no.a.run.app/"
 
         fun getRetroInstance(): Retrofit {
 

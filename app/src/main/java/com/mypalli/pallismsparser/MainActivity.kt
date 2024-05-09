@@ -28,16 +28,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.Gson
 import com.mypalli.pallismsparser.SMSViewModels.SMSViewModel
+import com.mypalli.pallismsparser.dataclasses.AppDatabase
 import com.mypalli.pallismsparser.dataclasses.SMSData
+import com.mypalli.pallismsparser.dataclasses.SMSRepository
 import com.mypalli.pallismsparser.ui.theme.PALLISMSPARSERTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val smsViewModel by viewModels<SMSViewModel>()
+//    private val smsViewModel by viewModels<SMSViewModel>()
+    private val smsViewModel: SMSViewModel by viewModels {
+        SMSViewModelFactory(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,7 +189,17 @@ fun PermissionRequester(
 //    vm.postData()
 
 }
-
+class SMSViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SMSViewModel::class.java)) {
+            val database = AppDatabase.getDatabase(context)
+            val repository = SMSRepository() // Assuming SMSRepository takes a database as a parameter.
+            @Suppress("UNCHECKED_CAST")
+            return SMSViewModel(repository, database) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
