@@ -4,15 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.mypalli.pallismsparser.SMSViewModels.SMSViewModel
-import okhttp3.internal.http.toHttpDateString
 import java.lang.Exception
-import java.util.Date
-import kotlin.time.Duration.Companion.days
+
 //class SmsReceiver : BroadcastReceiver() {
 //    override fun onReceive(context: Context, intent: Intent) {
 //        if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
@@ -65,6 +59,9 @@ import kotlin.time.Duration.Companion.days
 //
 //                Log.d("SmsReceiver", "$body")
 //                Log.d("My Regex data", "$myData")
+
+
+
 //            }
             try {
                 var myData= extractTransactionDetails(messageString,messages.first().displayOriginatingAddress)

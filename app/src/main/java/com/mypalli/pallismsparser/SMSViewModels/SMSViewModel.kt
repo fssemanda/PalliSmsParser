@@ -69,12 +69,20 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),pri
 
             Log.d("Data to be posted", smsData.toString())
 //            var datalist = smsDataList
-            val smsPostData = postSMSData(smsData)
-            smsDataState.value = smsPostData
-            Log.d("Data to be posted", smsData.toString())
+            try {
+                val smsPostData = postSMSData(smsData)
+                smsDataState.value = smsPostData
+                Log.d("Data to be posted", smsData.toString())
+            }
+            catch (ex:Exception){
+                Log.d("Failed to Post Saving to localDB", smsData.toString())
+                saveDataLocally(smsData)
+
+            }
         }
     }
     fun saveDataLocally(smsData: SMSData) {
+        Log.d("Saving SMS Cache","Attempting Saving to Cache")
         viewModelScope.launch {
             val entity = SMSDataEntity(
                 telNetwork = smsData.telNetwork,
@@ -89,18 +97,41 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),pri
                 transactionId = smsData.transactionId,
                 tax = smsData.tax
             )
-            database.smsDao().insert(entity)
+            try{
+                database.smsDao().insert(entity)
+                val dbData= database.smsDao().getAllSMSData()
+                Log.d("Saved SMS Cache","Successfully Saved Cache")
+                dbData.forEach{
+                    println(it.amount)
+                }
+            }
+            catch (ex:Exception){
+                val dbData= database.smsDao().getAllSMSData()
+                dbData.forEach{
+                    println(it)
+                }
+
+
+                Log.d("Failure","Failed Saved Cache: $ex")
+            }
         }
     }
 
     fun synchronizeData() {
         viewModelScope.launch {
             val smsDataList = database.smsDao().getAllSMSData()
+            Log.d("SMSLIST","${smsDataList.size}")
             smsDataList.forEach {
                 try {
-                    Log.e("Saving Data to DB", "it")
+                    Log.e("Saving Data to DB", "${it.name}")
 
-                    postSMSData(smsDataState.value!!)
+//                    postSMSData(smsDataState.value!!)
+                    val mySMSData = SMSData(telNetwork = it.telNetwork, amount = it.amount, name = it.name,
+                        transactionId = it.transactionId, transactionType = it.transactionType, tax = it.tax, balance = it.balance,
+                        phone_number = it.phone_number, date=it.date,fee=it.fee,reason = it.reason,
+                        )
+                    postSMSData(mySMSData)
+
                     database.smsDao().deleteSMSData(it.id)  // Delete after successful upload
                 } catch (e: Exception) {
                     Log.e("Sync Error", "Failed to upload: ${e.message}")

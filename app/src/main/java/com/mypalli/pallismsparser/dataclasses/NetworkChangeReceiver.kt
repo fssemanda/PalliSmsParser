@@ -12,9 +12,14 @@ import com.mypalli.pallismsparser.SMSViewModels.SMSViewModel
 class NetworkChangeReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (isOnline(context)) {
+
+            Log.d("Logs", "App is Online")
+
             val viewModel = ViewModelProvider(context as MainActivity)[SMSViewModel::class.java]
             viewModel.synchronizeData()
         }
+        else
+            Log.d("Logs", "App is offline")
     }
 
     private fun isOnline(context: Context): Boolean {
