@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        connectivityObserver = NetworkConnectivityObserver(applicationContext)
+//        connectivityObserver = NetworkConnectivityObserver(applicationContext)
 
         connectivityObserver = NetworkConnectivityObserver(applicationContext)
 
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             connectivityObserver.observe().collect { status ->
                 when (status) {
                     ConnectivityObserver.Status.Available -> {
-                        smsViewModel.synchronizeData() // Trigger data sync when network is available
+                        smsViewModel.synchronizeData()
                     }
                     else -> {
                        Log.d("LifeCycle Scope Running","Nothing: $status")
@@ -72,7 +72,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             PALLISMSPARSERTheme {
-                // A surface container using the 'background' color from the theme
                 val status by connectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -153,6 +152,8 @@ class MainActivity : ComponentActivity() {
     }
     fun toJsonObject(input: String): String {
         // Remove the enclosing braces and trim any surrounding whitespace
+
+        try{
         val trimmed = input.trim().removeSurrounding("{", "}")
 
         // Split into key-value pairs
@@ -166,7 +167,10 @@ class MainActivity : ComponentActivity() {
         }.joinToString(", ")
 
         return "{$jsonEntries}"
-    }
+    }catch (ex:Exception){
+        Log.e("Error Converting Json object","$ex")
+        return ex.toString()
+        }    }
 
     companion object {
         fun handleSMSData(formattedString: String) {

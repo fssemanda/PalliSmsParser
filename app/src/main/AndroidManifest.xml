@@ -55,7 +55,7 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <service android:name=".SMSProcessingService" />
+        <service android:name=".SMSProcessingService"  />
 <!--        <receiver android:name=".SmsReceiver"-->
 <!--            android:exported="true">-->
 <!--            <intent-filter>-->

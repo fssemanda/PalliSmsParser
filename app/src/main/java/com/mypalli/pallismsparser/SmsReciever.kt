@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.lang.Exception
 
@@ -34,9 +35,6 @@ import java.lang.Exception
         if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
             val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
 
-//            val vm:SMSViewModel= viewModel()
-
-//            messages.forEach {   println(it.messageBody) }
             messageString=""
 
             for (singleMessage in messages)
@@ -45,29 +43,17 @@ import java.lang.Exception
 
             }
             println(messageString)
-//            messages.forEach { message ->
-//                // Handle each message here. For example, print the content.
-//                val sender = message.displayOriginatingAddress
-//                val body = message.messageBody
-//                val timeDelivered = message.timestampMillis.toLong()
-//                val millis: Long = timeDelivered // example milliseconds
-//                val date = Date(millis)
-//                println(message.messageBody)
-////                var myData= extractTransactionDetails(messageString,sender)
-//
-//
-//
-//                Log.d("SmsReceiver", "$body")
-//                Log.d("My Regex data", "$myData")
 
-
-
-//            }
             try {
                 var myData= extractTransactionDetails(messageString,messages.first().displayOriginatingAddress)
                 val myDataIntent = Intent("com.mypalli.pallismsparser.SMS_RECEIVED")
                 myDataIntent.putExtra("sms_data", myData.toString()) // assuming myData is a JSON string
                 LocalBroadcastManager.getInstance(context).sendBroadcast(myDataIntent)
+//                context.startService(myDataIntent)
+                Intent(context, SMSProcessingService::class.java).also { intent ->
+                    intent.putExtra("message_body", myData.toString())
+                    ContextCompat.startForegroundService(context, intent)
+                }
             }
             catch (ex: Exception){
                 val myIntent = Intent("SMS_ISSUES")

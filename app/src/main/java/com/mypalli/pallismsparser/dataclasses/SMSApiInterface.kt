@@ -9,12 +9,12 @@ interface SMSApiInterface {
 
     @POST("sms/sms-post/")
     @Headers("Accept:application/json", "Content-Type:application/json")
-//    suspend fun postSMSData(@Body params:SMSData):SMSData
-    suspend fun postSMSData(@Body params:SMSData):SMSData{
-        println(params)
-        Log.d("Inside the interface", params.toString())
-        return params
-    }
-
-
+    suspend fun postSMSData(@Body params:SMSData):SMSData
+//    suspend fun postSMSData(@Body params:SMSData):SMSData{
+//        println(params)
+//        Log.d("Inside the interface", params.toString())
+//        return params
+//    }
+//
+//
 }

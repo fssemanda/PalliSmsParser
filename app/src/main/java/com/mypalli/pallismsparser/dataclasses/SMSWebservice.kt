@@ -12,7 +12,7 @@ class SMSWebservice {
     }
 
     suspend fun postSMSData(smsData:SMSData): SMSData {
-        Log.d("Inside the Webservice", smsData.toString())
+        Log.d("Sending Data to endpoint", smsData.toString())
         return SMSApi.postSMSData(smsData)
 
     }
