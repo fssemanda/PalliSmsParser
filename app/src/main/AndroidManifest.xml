@@ -17,7 +17,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNCn"/>
+
     <application
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
@@ -55,7 +56,10 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <service android:name=".SMSProcessingService"  />
+        <service android:name=".SMSProcessingService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            ></service>
 <!--        <receiver android:name=".SmsReceiver"-->
 <!--            android:exported="true">-->
 <!--            <intent-filter>-->

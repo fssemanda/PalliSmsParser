@@ -84,7 +84,7 @@ fun getRegexPatterns(): List<Pair<String, Regex>> {
         "MTN_Deposit" to """You have deposited UGX ([\d,]+) from ([A-Z ]+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}). New balance: UGX ([\d,]+). ID: (\d+). Do NOT share your Mobile Money PIN.""".toRegex(),
 //        "MTN_WithdrawRequest" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
         "MTN_Request" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is  UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
-
+        "BANK_TRANSFER" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is  UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
         // MOMO""".toRegex() //
 //        "MOMO_Payment" to """You have received ([\d,]+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: ([\d,]+) UGX. Fee was ([\d,]+) UGX. Financial Transaction Id: (\d+).""".toRegex(),
 //        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Message from sender: Till:(\d+).+Your new balance: ([\d,]+) UGX. Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex()
