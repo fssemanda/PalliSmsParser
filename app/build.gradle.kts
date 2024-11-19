@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mypalli.pallismsparser"
-        minSdk = 28
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,6 +51,7 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+    buildToolsVersion = "34.0.0"
 
 }
 

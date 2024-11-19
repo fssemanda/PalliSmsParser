@@ -7,6 +7,9 @@ import android.provider.Telephony
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.lang.Exception
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 //class SmsReceiver : BroadcastReceiver() {
 //    override fun onReceive(context: Context, intent: Intent) {
@@ -71,24 +74,48 @@ fun getRegexPatterns(): List<Pair<String, Regex>> {
         // Airtel
         // (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})
         // CASH DEPOSIT of UGX ([\d,]+) from\s+([A-Z ]+ [A-Z ]+).+Bal UGX ([\d,]+)\. TID:(\d+)\. Date (\d{2}-[A-Za-z]+)""".toRegex()
-        "Airtel_Deposit" to """CASH DEPOSIT of UGX ([\d,]+) from\s+([A-Z ]+).+Bal UGX ([\d,]+)\. TID:(\d+).+Date (\d{2}-[A-Za-z]+)""".toRegex(),
-        "Airtel_InternalPayment" to """PAID UGX ([\d,]+) to ([A-Z ]+).*Charge UGX ([\d,]+), TID (\d+).*Bal UGX ([\d,]+) Date: (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
-        "Airtel_CustomerPayment" to """RECEIVED UGX ([\d,]+) from (\d+), ([A-Z ]+).+Bal UGX ([\d,]+)\. TID: (\d+)""".toRegex(),
-        "Airtel_Remittance" to """SENT UGX ([\d,]+) to ([A-Z ]+) (\d+).+Fee UGX ([\d,]+).+Bal UGX ([\d,]+)\. TID: (\d+).+Date: (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
+        "Airtel_Deposit" to """CASH DEPOSIT of UGX ([\d,]+) from\s+([A-Za-z ]+).+Bal UGX ([\d,]+)\. TID:(\d+).+Date (\d{2}-[A-Za-z]+)""".toRegex(),
+        "Airtel_Deposit" to """CASH DEPOSIT of UGX ([\d,]+) from  ([A-Za-z ]+)\. Bal UGX ([\d,]+)\. TID (\d+)\. (\d{1,2}-[A-Za-z]+-\d{4}) \d{2}:\d{2}""".toRegex(),
+        "Airtel_InternalPayment" to """PAID UGX ([\d,]+) to ([A-Za-z ]+).*Charge UGX ([\d,]+), TID (\d+).*Bal UGX ([\d,]+) Date: (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
+//        "Airtel_CustomerPayment" to """RECEIVED UGX ([\d,]+) from (\d+), ([A-Z ]+).+Bal UGX ([\d,]+)\. TID: (\d+)""".toRegex(),
+        "Airtel_CustomerPayment" to """RECEIVED\. TID (\d+)\. UGX ([\d,]+) from (\d+), ([A-Za-z ]+)\. Bal UGX ([\d,]+)\.""".toRegex(),
+//        "Airtel_Remittance" to """SENT UGX ([\d,]+) to ([A-Za-z ]+) (\d+).+Fee UGX ([\d,]+).+Bal UGX ([\d,]+)\. TID: (\d+).+Date: (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
+        "Airtel_Remittance" to """SENT\.TID (\d+)\. UGX ([\d,]+) to ([A-Za-z ]+)  (\d+)\. Fee UGX ([\d,]+)\. Bal UGX ([\d,]+)\.""".toRegex(),
         "Airtel_Transfer" to """You have been debited UGX ([\d,]+)\. Fee UGX ([\d,]+)\. Bal UGX ([\d,]+)\. TID (\d+)""".toRegex(),
        "Airtel_Withdraw" to """Withdraw of UGX([\d,]+) with Agent ID: (\d+)\.Fee UGX ([\d,]+)\. Bal UGX ([\d,]+)\.TID: (\d+)\. Date (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})\.Tax UGX (\d+)\.https://bit\.ly/3ZgpiNw""".toRegex(),
-        // MTN
+       //Airtel TO Bank Regex
+        "STANBIC_Transfer" to """PAID\.TID (\d+)\. UGX ([\d,]+) to STANBIC Charge UGX ([\d,]+)\. Bal UGX ([\d,]+)\. (\d{1,2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
+        // Airtel To Equity
+        "EQUITY_Transfer" to """You have sent Amount: UGX ([\d,]+) to Bank Account: 1035203139887. Txn ID: (\d+)\. Bal UGX ([\d,]+)""".toRegex(),
+
+        "Centenary_Transfer" to """SENT. TID (\d+). UGX ([\d,]+) to CENTENARY BANK on 3100106557. Fee UGX ([\d,]+) Balance UGX ([\d,]+) Date (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})\.""".toRegex(),
+
+       // MTN
         "MTN_Remittance" to """You have sent UGX ([\d,]+) to ([A-Z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}), fee: (\d+).+New balance: (\d+). ID :(\d+)""".toRegex(),
         "MTN_Withdraw" to """You have withdrawn UGX ([\d,]+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\. Fee: UGX ([\d,]+), Tax: UGX ([\d,]+)\. New balance: UGX ([\d,.]+)""".toRegex(),
-        "MTN_Transfer" to """You have received UGX ([\d,]+) from ([A-Za-z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+fee:(\d+).+New balance: UGX ([\d,]+)\. ID: (\d+)""".toRegex(),
-        "MTN_Deposit" to """You have deposited UGX ([\d,]+) from ([A-Z ]+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}). New balance: UGX ([\d,]+). ID: (\d+). Do NOT share your Mobile Money PIN.""".toRegex(),
+//        "MTN_CustomerPayment" to """You have received UGX ([\d,]+) from ([A-Za-z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+fee:(\d+).+New balance: UGX ([\d]+)\. ID: (\d+)""".toRegex(),
+        "MTN_CustomerPayment" to """You have received UGX ([\d,]+) from ([A-Za-z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+fee:(\d+).+Reason:\s*(.*).+New balance: UGX ([\d]+)\. ID: (\d+)""".toRegex(),
+//        You have received UGX 4000000 from JERSA NAKALUNGI, 256788444788 on 2024-08-14 11:58:10. fee:0. Reason: urban 1. New balance: UGX 8806971. ID: 27621554061.
+
+//        "MTN_Deposit" to """You have deposited UGX ([\d,]+) from ([A-Z ]+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}). New balance: UGX ([\d,]+). ID: (\d+). Do NOT share your Mobile Money PIN.""".toRegex(),
+
+        "MTN_Deposit" to """You have deposited UGX ([\d]+) from (.*?)(?:\.|\s)on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\. New balance: UGX ([\d]+). ID: (\d+). Do NOT share your Mobile Money PIN.""".toRegex(),
+
+
+
 //        "MTN_WithdrawRequest" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
         "MTN_Request" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is  UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
-        "BANK_TRANSFER" to """Y'ello\. You have requested a withdrawal of UGX ([\d,]+) from ([\w\s]+)\. Dial \*165# and select My Approvals to authorize the transaction\.The total fee is  UGX ([\d,]+) inclusive of ([\d\.]+) percent tax\.Transaction ID (\d+)""".toRegex(),
-        // MOMO""".toRegex() //
+//        "MTN_BANK_TRANSFER" to """Y'ello\. You have transferred UGX UGX ([\d,]+) to ([\w\s]+)\. TX Charge  UGX (\d+)\. Your new balance: UGX UGX ([\d]+)\.\s+Transaction ID:(\d+)\.""".toRegex(),
+//        "MTN_BANK_TRANSFER" to """Y'ello\. You have transferred UGX UGX ([\d,]+) to ([\w\s]+)\. TX Charge  UGX (\d+)\.\s+Your new balance:\s+UGX\s([\d]+)\.\s+Transaction ID:(\d+)\.""".toRegex(),
+
 //        "MOMO_Payment" to """You have received ([\d,]+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: ([\d,]+) UGX. Fee was ([\d,]+) UGX. Financial Transaction Id: (\d+).""".toRegex(),
 //        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Message from sender: Till:(\d+).+Your new balance: ([\d,]+) UGX. Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex()
-        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: (\d+) UGX.+ Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex()
+        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: (\d+) UGX.+ Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex(),
+       //MTN TO BANK
+        "Bank_Transfer" to """You have transferred UGX UGX ([\d,]+\.\d{2}) to ([\w\s]+)\.""".toRegex(),
+
+//        "BANK_TRANSFER" to """Y'ello\. You have transferred UGX UGX ([\d,]+) to ([A-Za-z ]+). TX Charge  UGX (\d+)\. Your new balance: UGX UGX ([\d,]+)\. Transaction ID:(\d+)\.""".toRegex(),
+//        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: (\d+) UGX.+ Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex()
         )
 }
 fun extractTransactionDetails(text: String, originatingAddress:String): Map<String?, String?>? {
@@ -147,13 +174,13 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                     return mapOf(
                         "transactionType" to type.split("_")[1],
                         "telNetwork" to type.split("_")[0],
-                        "amount" to values.getOrNull(0)!!,
+                        "amount" to values.getOrNull(1)!!,
                         "name" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
-                        "phone_number" to values.getOrNull(1)!!,  // Adjust according to actual group index for each pattern
+                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
 //                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
 //                                              "fee" to values.getOrNull(2),
-                        "transactionId" to values.getOrNull(4),
-                        "balance" to values.getOrNull(3),
+                        "transactionId" to values.getOrNull(0),
+                        "balance" to values.getOrNull(4),
 //                        "date" to values.getOrNull(4),
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
                     )
@@ -162,13 +189,13 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                     return mapOf(
                         "transactionType" to type.split("_")[1],
                         "telNetwork" to type.split("_")[0],
-                        "amount" to values.getOrNull(0)!!,
-                        "name" to values.getOrNull(1)!!,  // Adjust according to actual group index for each pattern
-                        "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
+                        "amount" to values.getOrNull(1)!!,
+                        "name" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
+                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
 //                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
-                        "fee" to values.getOrNull(3),
-                        "transactionId" to values.getOrNull(5),
-                        "balance" to values.getOrNull(4),
+                        "fee" to values.getOrNull(4),
+                        "transactionId" to values.getOrNull(0),
+                        "balance" to values.getOrNull(5),
                         "date" to values.getOrNull(6),
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
                     )
@@ -187,6 +214,51 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "date" to values.getOrNull(5),
                         "tax" to values.getOrNull(6) // Adjust according to actual group index for each pattern
                     )
+                }
+                else if(type=="STANBIC_Transfer"){
+                    return mapOf(
+                        "transactionType" to type.split("_")[1],
+                        "telNetwork" to type.split("_")[0],
+                        "amount" to values.getOrNull(1)!!,
+                        "name" to "Palli Airtel",  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
+                        "fee" to values.getOrNull(2),
+                        "transactionId" to values.getOrNull(0),
+                        "balance" to values.getOrNull(3),
+                        "date" to values.getOrNull(4),
+
+                    )
+                }
+                else if(type=="EQUITY_Transfer"){
+                    return mapOf(
+                        "transactionType" to type.split("_")[1],
+                        "telNetwork" to type.split("_")[0],
+                        "amount" to values.getOrNull(0)!!,
+                        "name" to "Palli Airtel",  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
+                        "fee" to "No Fee",
+                        "transactionId" to values.getOrNull(1),
+                        "balance" to values.getOrNull(2),
+                        "date" to getDate(),
+
+                        )
+                }
+                else if(type=="Centenary_Transfer"){
+                    return mapOf(
+                        "transactionType" to type.split("_")[1],
+                        "telNetwork" to type.split("_")[0],
+                        "amount" to values.getOrNull(1)!!,
+                        "name" to "Palli Airtel",  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
+//                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
+                        "fee" to values.getOrNull(2),
+                        "transactionId" to values.getOrNull(0),
+                        "balance" to values.getOrNull(3),
+                        "date" to values.getOrNull(4),
+
+                        )
                 }
 
 //                "MTN_Remittance" to """You have sent UGX ([\d,]+) to ([A-Z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}), fee: (\d+).+New balance: (\d+). ID :(\d+)""".toRegex(),
@@ -235,7 +307,7 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                 }
 // "MTN_Deposit" to """You have received UGX ([\d,]+) from ([A-Za-z ]+), (\d+) on (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+fee:(\d+).+New balance: UGX ([\d,]+)\. ID: (\d+)""".toRegex(),
 
-                else if(type=="MTN_Transfer"){
+                else if(type=="MTN_CustomerPayment"){
                     return mapOf(
                         "transactionType" to type.split("_")[1],
                         "telNetwork" to type.split("_")[0],
@@ -244,8 +316,10 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "phone_number" to values.getOrNull(2)!!,  // Adjust according to actual group index for each pattern
 //                        "phone_number" to values.getOrNull(3)!!,  // Adjust according to actual group index for each pattern
 
-                        "transactionId" to values.getOrNull(5),
-                        "balance" to values.getOrNull(4),
+                        "transactionId" to values.getOrNull(7),
+                        "reason" to values.getOrNull(5),
+                        "fee" to values.getOrNull(4),
+                        "balance" to values.getOrNull(6),
                         "date" to values.getOrNull(3),
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
                     )
@@ -282,6 +356,19 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "transactionId" to values.getOrNull(6) // Adjust according to actual group index for each pattern
                     )
                 }
+                else if(type=="MTN_STANBIC_TRANSFER"){
+                    return mapOf(
+                        "transactionType" to type.split("_")[2],
+                        "telNetwork" to type.split("_")[1],
+                        "amount" to values.getOrNull(0)!!,
+                        "name" to "Palli MTN",
+                        "fee" to values.getOrNull(2),
+//
+                        "balance" to values.getOrNull(3),
+
+                        "transactionId" to values.getOrNull(4)
+                    )
+                }
 
                 else
                     return  null
@@ -304,4 +391,11 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
     return null
 }
 
+fun getDate():String{
+    val currentDateTime = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy HH:mm")
+    val dateTimeString = currentDateTime.format(formatter)
+
+    return dateTimeString
+}
 

@@ -31,21 +31,21 @@ object jsonConversionHelper {
     fun handleSMSData(context: Context, data: String, smsViewModel: SMSViewModel) {
         // Convert JSON back to your object and process it with ViewModel
         try {
-        val smsData = Gson().fromJson(data, SMSData::class.java)
+            val smsData = Gson().fromJson(data, SMSData::class.java)
             if (smsData != null) {
 //        val smsData = Gson().fromJson(data, SMSData::class.java)
 
 //        smsViewModel.smsDataList = SMSData(smsData.telNetwork,smsData.transactionType,smsData.amount,smsData.phone_number,smsData.date,
 //            smsData.fee,smsData.balance,smsData.name,smsData.reason,smsData.transactionId))
-        smsViewModel.amount.value=smsData.amount
-        smsViewModel.balance.value=smsData.balance
-        smsViewModel.name.value=smsData.name
-        smsViewModel.fee.value=smsData.fee
-        smsViewModel.phone_number.value=smsData.phone_number
-        smsViewModel.reason.value=smsData.reason
-        smsViewModel.transactionType.value=smsData.transactionType
-        smsViewModel.transactionId.value=smsData.transactionId
-        smsViewModel.date.value = smsData.date
+        smsViewModel.amount.value=smsData.amount!!.toString()
+        smsViewModel.balance.value=smsData.balance!!.toString()
+        smsViewModel.name.value=smsData.name.toString()
+        smsViewModel.fee.value=smsData.fee.toString()
+        smsViewModel.phone_number.value=smsData.phone_number.toString()
+        smsViewModel.reason.value=smsData.reason.toString()
+        smsViewModel.transactionType.value=smsData.transactionType.toString()
+        smsViewModel.transactionId.value=smsData.transactionId.toString()
+        smsViewModel.date.value = smsData.date.toString()
         smsViewModel.telNetworkState.value=smsData.telNetwork.toString()
         smsViewModel.tax.value=smsData.tax.toString()
 
@@ -56,7 +56,7 @@ object jsonConversionHelper {
                 Log.e("JSONConversion", "Failed to parse JSON data.")
             }
         } catch (e: JsonSyntaxException) {
-            Log.e("JSONConversion", "Error parsing JSON", e)
+            Log.e("JSONConversion", "Error parsing JSON")
         }
     }
 //
