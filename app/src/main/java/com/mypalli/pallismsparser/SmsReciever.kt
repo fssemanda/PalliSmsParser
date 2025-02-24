@@ -74,7 +74,7 @@ fun getRegexPatterns(): List<Pair<String, Regex>> {
         // Airtel
         // (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})
         // CASH DEPOSIT of UGX ([\d,]+) from\s+([A-Z ]+ [A-Z ]+).+Bal UGX ([\d,]+)\. TID:(\d+)\. Date (\d{2}-[A-Za-z]+)""".toRegex()
-        "Airtel_Deposit" to """CASH DEPOSIT of UGX ([\d,]+) from\s+([A-Za-z ]+).+Bal UGX ([\d,]+)\. TID:(\d+).+Date (\d{2}-[A-Za-z]+)""".toRegex(),
+        "Airtel_Deposit" to """CASH DEPOSIT of UGX ([\d,]+) from\s+([A-Za-z ]+). Bal UGX ([\d,]+)\. TID:(\d+).+Date (\d{2}-[A-Za-z]+)""".toRegex(),
         "Airtel_Deposit" to """CASH DEPOSIT of UGX ([\d,]+) from  ([A-Za-z ]+)\. Bal UGX ([\d,]+)\. TID (\d+)\. (\d{1,2}-[A-Za-z]+-\d{4}) \d{2}:\d{2}""".toRegex(),
         "Airtel_InternalPayment" to """PAID UGX ([\d,]+) to ([A-Za-z ]+).*Charge UGX ([\d,]+), TID (\d+).*Bal UGX ([\d,]+) Date: (\d{2}-[A-Za-z]+-\d{4} \d{2}:\d{2})""".toRegex(),
 //        "Airtel_CustomerPayment" to """RECEIVED UGX ([\d,]+) from (\d+), ([A-Z ]+).+Bal UGX ([\d,]+)\. TID: (\d+)""".toRegex(),

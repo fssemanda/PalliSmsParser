@@ -11,7 +11,7 @@ class RetrofitBuilderClass {
         //Dev link
 //        const val BASE_URL ="https://palli-production-kprtnean4a-no.a.run.app/"
         //Production
-        const val BASE_URL ="https://palli-app2-302984642881.europe-southwest1.run.app/"
+        const val BASE_URL ="https://palli-app3-302984642881.europe-southwest1.run.app/"
 
         fun getRetroInstance(): Retrofit {
 
@@ -28,3 +28,8 @@ class RetrofitBuilderClass {
 
     }
 }
+
+//match = re.search(r'code :(\d+)', text)
+//if match:
+//code = match.group(1)  # This will give you "2864"
+//print(code)
