@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.lang.Exception
@@ -113,6 +114,10 @@ fun getRegexPatterns(): List<Pair<String, Regex>> {
         "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: (\d+) UGX.+ Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex(),
        //MTN TO BANK
         "Bank_Transfer" to """You have transferred UGX UGX ([\d,]+\.\d{2}) to ([\w\s]+)\.""".toRegex(),
+
+        //MOMO CODE
+        "MOMO_CODE" to """<#> Y'ello. Please enter the following code :(\d+) to complete your login\. Be Careful\. NEVER Share this code\.""".toRegex(),
+
 
 //        "BANK_TRANSFER" to """Y'ello\. You have transferred UGX UGX ([\d,]+) to ([A-Za-z ]+). TX Charge  UGX (\d+)\. Your new balance: UGX UGX ([\d,]+)\. Transaction ID:(\d+)\.""".toRegex(),
 //        "MOMO_Payment" to """You have received (\d+) UGX from ([A-Z ]+) \((\d+)\) on your mobile money account at (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).+Your new balance: (\d+) UGX.+ Fee was (\d+) UGX. Financial Transaction Id: (\d+).""".toRegex()
@@ -302,6 +307,15 @@ fun extractTransactionDetails(text: String, originatingAddress:String): Map<Stri
                         "tax" to values.getOrNull(3),
                         "balance" to values.getOrNull(4),
                         "date" to values.getOrNull(1),
+//                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
+                    )
+                }
+                else if(type=="MOMO_CODE"){
+//                    Log.d("Type is", type)
+                    return mapOf(
+                        "transactionType" to "MoMo Code",
+                        "telNetwork" to type.split("_")[0],
+                        "code" to values.getOrNull(0),
 //                        "transactionId" to values.getOrNull(4) // Adjust according to actual group index for each pattern
                     )
                 }

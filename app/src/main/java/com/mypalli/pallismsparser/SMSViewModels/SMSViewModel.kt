@@ -26,6 +26,7 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),pri
     val name= mutableStateOf<String?>(null)
     val reason= mutableStateOf<String?>(null)
     val transactionId= mutableStateOf<String?>(null)
+    val code= mutableStateOf<String?>(null)
     val tax= mutableStateOf<String?>(null)
 
     
@@ -62,6 +63,7 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),pri
                 balance = balance.value,
                 name = name.value,
                 reason=reason.value,
+                code = code.value,
                 transactionId=transactionId.value,
                 tax = tax.value
 
@@ -93,6 +95,7 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),pri
                 fee = smsData.fee,
                 balance = smsData.balance,
                 name = smsData.name,
+                code = smsData.code,
                 reason = smsData.reason,
                 transactionId = smsData.transactionId,
                 tax = smsData.tax
@@ -138,6 +141,7 @@ class SMSViewModel(private var smsRepository: SMSRepository= SMSRepository(),pri
                             phone_number = it.phone_number,
                             date = it.date,
                             fee = it.fee,
+                            code = it.code,
                             reason = it.reason,
                         )
                         postSMSData(mySMSData)

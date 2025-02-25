@@ -12,6 +12,8 @@ class RetrofitBuilderClass {
 //        const val BASE_URL ="https://palli-production-kprtnean4a-no.a.run.app/"
         //Production
         const val BASE_URL ="https://palli-app3-302984642881.europe-southwest1.run.app/"
+//        const val BASE_URL ="https://palli-app2-302984642881.europe-southwest1.run.app/"
+
 
         fun getRetroInstance(): Retrofit {
 

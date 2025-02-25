@@ -89,8 +89,10 @@ class SMSProcessingService : Service() {
                 return START_NOT_STICKY
             } else {
                 val formattedString = toJsonObject(data.toString())
-                Log.d("Data Received via intent", "$formattedString")
+                Log.d("Data Received via intent", "${formattedString[0]}")
 
+                Log.d("My data for upload", "${formattedString[0]}")
+//                println(formattedString::class.simpleName)
                 formattedString?.let {
 
                     jsonConversionHelper.handleSMSData(this, it, smsViewModel)

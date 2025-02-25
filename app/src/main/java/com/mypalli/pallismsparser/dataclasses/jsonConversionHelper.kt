@@ -25,10 +25,11 @@ object jsonConversionHelper {
             // Properly quote the key and value, escaping necessary characters in JSON
             "\"${key.trim()}\": \"${value.trim().replace("\"", "\\\"")}\""
         }.joinToString(", ")
-
+        Log.d("My Json Entries", jsonEntries)
         return "{$jsonEntries}"
     }
     fun handleSMSData(context: Context, data: String, smsViewModel: SMSViewModel) {
+        Log.d("Data for conversation",data)
         // Convert JSON back to your object and process it with ViewModel
         try {
             val smsData = Gson().fromJson(data, SMSData::class.java)
@@ -39,17 +40,18 @@ object jsonConversionHelper {
 //            smsData.fee,smsData.balance,smsData.name,smsData.reason,smsData.transactionId))
         smsViewModel.amount.value=smsData.amount!!.toString()
         smsViewModel.balance.value=smsData.balance!!.toString()
-        smsViewModel.name.value=smsData.name.toString()
-        smsViewModel.fee.value=smsData.fee.toString()
-        smsViewModel.phone_number.value=smsData.phone_number.toString()
-        smsViewModel.reason.value=smsData.reason.toString()
-        smsViewModel.transactionType.value=smsData.transactionType.toString()
-        smsViewModel.transactionId.value=smsData.transactionId.toString()
-        smsViewModel.date.value = smsData.date.toString()
-        smsViewModel.telNetworkState.value=smsData.telNetwork.toString()
-        smsViewModel.tax.value=smsData.tax.toString()
+        smsViewModel.name.value=smsData.name!!.toString()
+        smsViewModel.fee.value=smsData.fee!!.toString()
+        smsViewModel.phone_number.value=smsData.phone_number!!.toString()
+        smsViewModel.reason.value=smsData.reason!!.toString()
+        smsViewModel.transactionType.value=smsData.transactionType!!.toString()
+        smsViewModel.transactionId.value=smsData.transactionId!!.toString()
+        smsViewModel.date.value = smsData.date!!.toString()
+        smsViewModel.code.value = smsData.code!!.toString()
+        smsViewModel.telNetworkState.value=smsData.telNetwork!!.toString()
+        smsViewModel.tax.value=smsData.tax!!.toString()
 
-        Log.d("Data before being processed",smsData.tax.toString())
+        Log.d("Code before being processed",smsData.code.toString())
 
         smsViewModel.postData()
             } else {
