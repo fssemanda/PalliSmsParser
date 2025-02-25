@@ -35,7 +35,7 @@ class SMSProcessingService : Service() {
 //    @Inject lateinit var smsViewModel: SMSViewModel
     private lateinit var connectivityObserver: ConnectivityObserver
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-
+//
     override fun onCreate() {
         super.onCreate()
         val database = AppDatabase.getDatabase(this)
